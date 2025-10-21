@@ -1,0 +1,51 @@
+{
+    "name": "flow-crm-backend",
+    "version": "1.0.0",
+    "description": "REST API backend for Flow CRM system",
+    "main": "dist/server.js",
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/server.js",
+        "render-build": "npm install && npm run build",
+        "render-start": "node dist/server.js",
+        "dev": "tsx watch src/server.ts",
+        "test": "vitest --run",
+        "test:watch": "vitest",
+        "db:generate": "drizzle-kit generate",
+        "db:migrate": "tsx src/db/migrate.ts",
+        "db:seed": "tsx src/db/seed.ts",
+        "db:verify": "tsx src/db/verify-seed.ts",
+        "db:studio": "drizzle-kit studio"
+    },
+    "keywords": [
+        "crm",
+        "api",
+        "fastify",
+        "typescript"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@fastify/cors": "^11.1.0",
+        "@fastify/jwt": "^10.0.0",
+        "@types/bcryptjs": "^2.4.6",
+        "@types/jsonwebtoken": "^9.0.10",
+        "@types/node": "^24.6.1",
+        "@types/pg": "^8.15.5",
+        "bcryptjs": "^3.0.2",
+        "dotenv": "^17.2.3",
+        "drizzle-kit": "^0.18.1",
+        "drizzle-orm": "^0.44.5",
+        "fastify": "^5.6.1",
+        "jsonwebtoken": "^9.0.2",
+        "pg": "^8.16.3",
+        "typescript": "^5.9.3",
+        "zod": "^4.1.11"
+    },
+    "devDependencies": {
+        "@vitest/ui": "^3.2.4",
+        "pino-pretty": "^13.1.1",
+        "tsx": "^4.20.6",
+        "vitest": "^3.2.4"
+    }
+}

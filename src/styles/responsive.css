@@ -1,0 +1,517 @@
+/* Responsive Improvements for Flow CRM */
+
+/* Base responsive utilities */
+.truncate-mobile {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flex-wrap-mobile {
+  flex-wrap: wrap;
+}
+
+/* Prevent horizontal overflow */
+body, html {
+  overflow-x: hidden;
+}
+
+.main-with-sidebar {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Force mobile layout to have no margins */
+@media (max-width: 767px) {
+  .main-with-sidebar {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
+  
+  .main-content {
+    margin: 0 !important;
+    width: 100% !important;
+  }
+  
+  /* Mobile sidebar specific sizing */
+  .sidebar-mobile {
+    width: 260px !important;
+    max-width: 70vw !important;
+    min-width: 240px !important;
+  }
+  
+  /* Mobile button improvements */
+  .mobile-button-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+  
+  .mobile-button-group button,
+  .mobile-button-group .button {
+    width: 100% !important;
+    justify-content: center !important;
+    min-height: 44px !important;
+    font-size: 0.875rem !important;
+  }
+  
+  /* Action buttons in tables/cards */
+  .mobile-action-buttons {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.25rem !important;
+    justify-content: center !important;
+  }
+  
+  .mobile-action-buttons button {
+    min-width: 40px !important;
+    min-height: 40px !important;
+    padding: 0.5rem !important;
+  }
+  
+  /* Presales specific improvements */
+  .presales-card {
+    margin-bottom: 1rem !important;
+    padding: 1rem !important;
+  }
+  
+  .presales-header {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    align-items: stretch !important;
+  }
+  
+  .presales-filters {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+  
+  .presales-search {
+    width: 100% !important;
+  }
+  
+  .presales-date-filters {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.5rem !important;
+  }
+  
+  .presales-quick-filters {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    justify-content: center !important;
+  }
+  
+  .presales-quick-filters button {
+    flex: 1 !important;
+    min-width: 80px !important;
+  }
+  
+  /* Table responsiveness */
+  .presales-table {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  .presales-table table {
+    min-width: 600px !important;
+  }
+  
+  .presales-table th,
+  .presales-table td {
+    white-space: nowrap !important;
+    padding: 0.75rem 0.5rem !important;
+  }
+  
+  /* Status badges */
+  .status-badge {
+    font-size: 0.75rem !important;
+    padding: 0.25rem 0.5rem !important;
+    white-space: nowrap !important;
+  }
+  
+  /* Mobile card layout for presales */
+  .presales-mobile-card {
+    display: block !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.5rem !important;
+    padding: 1rem !important;
+    margin-bottom: 0.75rem !important;
+    background: white !important;
+  }
+  
+  .presales-mobile-card-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .presales-mobile-card-content {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.5rem !important;
+    font-size: 0.875rem !important;
+  }
+  
+  .presales-mobile-card-actions {
+    margin-top: 0.75rem !important;
+    padding-top: 0.75rem !important;
+    border-top: 1px solid #f3f4f6 !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+  .sidebar-mobile {
+    width: 240px !important;
+    max-width: 65vw !important;
+    min-width: 220px !important;
+  }
+}
+
+/* For larger mobile screens */
+@media (min-width: 481px) and (max-width: 767px) {
+  .sidebar-mobile {
+    width: 280px !important;
+    max-width: 75vw !important;
+  }
+}
+
+/* Mobile-first approach with better breakpoints */
+@media (max-width: 640px) {
+  /* Layout adjustments for mobile */
+  .main-content {
+    padding: 1rem !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+  
+  .main-with-sidebar {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+  
+  /* Header improvements */
+  .header-title {
+    font-size: 1.125rem !important;
+  }
+  
+  /* Sidebar mobile improvements */
+  .sidebar-mobile {
+    width: 260px !important;
+    max-width: 70vw !important;
+  }
+  
+  /* Cards and components */
+  .metrics-card {
+    padding: 1rem !important;
+  }
+  
+  .metrics-card h3 {
+    font-size: 0.875rem !important;
+  }
+  
+  .metrics-card .value {
+    font-size: 1.5rem !important;
+  }
+  
+  /* Tables */
+  .table-container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  .table-responsive {
+    min-width: 600px !important;
+  }
+  
+  /* Forms */
+  .form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  
+  /* Buttons */
+  .button-group {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+  
+  .button-group button {
+    width: 100% !important;
+  }
+  
+  /* Modals */
+  .modal-content {
+    margin: 1rem !important;
+    max-height: calc(100vh - 2rem) !important;
+    overflow-y: auto !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Tablet and mobile adjustments */
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  /* Navigation improvements */
+  .nav-item-text {
+    display: none !important;
+  }
+  
+  /* Content spacing */
+  .content-section {
+    padding: 1.5rem !important;
+  }
+  
+  .main-content {
+    padding: 1.5rem !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  
+  .main-with-sidebar {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+  
+  /* Force no margin on mobile */
+  .main-with-sidebar.ml-0 {
+    margin-left: 0 !important;
+  }
+  
+  /* Search and filters */
+  .search-filters {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+  
+  .search-input {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  /* Desktop small adjustments */
+  .sidebar-collapsed {
+    width: 4rem !important;
+  }
+  
+  .main-with-sidebar {
+    margin-left: 4rem !important;
+  }
+  
+  /* Grid adjustments */
+  .lg-grid-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .lg-grid-4 {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+/* Touch improvements */
+@media (hover: none) and (pointer: coarse) {
+  /* Better touch targets */
+  button, .clickable {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+  
+  /* Remove hover effects on touch devices */
+  .hover-effect:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Sharper borders and shadows */
+  .card, .modal, .dropdown {
+    border-width: 0.5px !important;
+  }
+}
+
+/* Landscape mobile */
+@media (max-width: 896px) and (orientation: landscape) {
+  .mobile-landscape-adjust {
+    height: calc(100vh - 2rem) !important;
+    overflow-y: auto !important;
+  }
+  
+  .header-mobile-landscape {
+    padding: 0.5rem 1rem !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-full-width {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  
+  .sidebar, .header-actions {
+    display: none !important;
+  }
+  
+  .main-content {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .auto-dark {
+    background-color: #1f2937 !important;
+    color: #f9fafb !important;
+  }
+  
+  .auto-dark-border {
+    border-color: #374151 !important;
+  }
+}
+
+/* Container queries for modern browsers */
+@container (max-width: 400px) {
+  .container-responsive {
+    padding: 0.5rem !important;
+  }
+  
+  .container-responsive .text-lg {
+    font-size: 1rem !important;
+  }
+}
+
+/* Utility classes for responsive design */
+.mobile-only {
+  display: block;
+}
+
+.desktop-only {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none;
+  }
+  
+  .desktop-only {
+    display: block;
+  }
+}
+
+/* Flexible grid system */
+.responsive-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .responsive-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .responsive-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Responsive text sizes */
+.responsive-text-sm {
+  font-size: 0.75rem;
+}
+
+.responsive-text-base {
+  font-size: 0.875rem;
+}
+
+.responsive-text-lg {
+  font-size: 1rem;
+}
+
+@media (min-width: 768px) {
+  .responsive-text-sm {
+    font-size: 0.875rem;
+  }
+  
+  .responsive-text-base {
+    font-size: 1rem;
+  }
+  
+  .responsive-text-lg {
+    font-size: 1.125rem;
+  }
+}
+
+/* Responsive spacing */
+.responsive-p-2 {
+  padding: 0.5rem;
+}
+
+.responsive-p-4 {
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .responsive-p-2 {
+    padding: 1rem;
+  }
+  
+  .responsive-p-4 {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-p-2 {
+    padding: 1.5rem;
+  }
+  
+  .responsive-p-4 {
+    padding: 2rem;
+  }
+}

@@ -1,0 +1,3189 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Flow CRM Backend API",
+        "description": "REST API para o sistema Flow CRM - Gerenciamento de clientes, produtos e pré-vendas",
+        "version": "1.0.0",
+        "contact": {
+            "name": "Flow CRM Team",
+            "email": "dev@flowcrm.com"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "Servidor de desenvolvimento"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        },
+        "schemas": {
+            "User": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID único do usuário"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Email do usuário"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Nome completo do usuário"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "admin",
+                            "manager",
+                            "employee"
+                        ],
+                        "description": "Papel do usuário no sistema"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Data de criação"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Data da última atualização"
+                    }
+                }
+            },
+            "Customer": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID único do cliente"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Nome completo do cliente"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Email do cliente"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "description": "Telefone do cliente"
+                    },
+                    "cpf": {
+                        "type": "string",
+                        "description": "CPF do cliente (apenas números)"
+                    },
+                    "address": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Endereço completo do cliente"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Data de criação"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Data da última atualização"
+                    }
+                }
+            },
+            "Product": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID único do produto"
+                    },
+                    "code": {
+                        "type": "string",
+                        "description": "Código único do produto"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Nome do produto"
+                    },
+                    "unit": {
+                        "type": "string",
+                        "description": "Unidade de medida (UN, KG, M, etc.)"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Descrição detalhada do produto"
+                    },
+                    "stock": {
+                        "type": "integer",
+                        "description": "Quantidade em estoque"
+                    },
+                    "purchasePrice": {
+                        "type": "string",
+                        "description": "Preço de compra (decimal como string)"
+                    },
+                    "salePrice": {
+                        "type": "string",
+                        "description": "Preço de venda (decimal como string)"
+                    },
+                    "saleType": {
+                        "type": "string",
+                        "description": "Tipo de venda (retail, wholesale, etc.)"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Data de criação"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Data da última atualização"
+                    }
+                }
+            },
+            "PreSale": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID único da pré-venda"
+                    },
+                    "customerId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID do cliente"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "draft",
+                            "pending",
+                            "approved",
+                            "cancelled",
+                            "converted"
+                        ],
+                        "description": "Status da pré-venda"
+                    },
+                    "total": {
+                        "type": "string",
+                        "description": "Valor total (decimal como string)"
+                    },
+                    "discount": {
+                        "type": "string",
+                        "description": "Valor do desconto (decimal como string)"
+                    },
+                    "discountType": {
+                        "type": "string",
+                        "enum": [
+                            "fixed",
+                            "percentage"
+                        ],
+                        "description": "Tipo de desconto"
+                    },
+                    "discountPercentage": {
+                        "type": "string",
+                        "description": "Percentual de desconto (decimal como string)"
+                    },
+                    "notes": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Observações da pré-venda"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Data de criação"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Data da última atualização"
+                    },
+                    "customer": {
+                        "$ref": "#/components/schemas/Customer"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PreSaleItem"
+                        }
+                    }
+                }
+            },
+            "PreSaleItem": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID único do item"
+                    },
+                    "preSaleId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID da pré-venda"
+                    },
+                    "productId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID do produto"
+                    },
+                    "quantity": {
+                        "type": "string",
+                        "description": "Quantidade (decimal como string)"
+                    },
+                    "unitPrice": {
+                        "type": "string",
+                        "description": "Preço unitário (decimal como string)"
+                    },
+                    "totalPrice": {
+                        "type": "string",
+                        "description": "Preço total do item (decimal como string)"
+                    },
+                    "discount": {
+                        "type": "string",
+                        "description": "Valor do desconto (decimal como string)"
+                    },
+                    "discountType": {
+                        "type": "string",
+                        "enum": [
+                            "fixed",
+                            "percentage"
+                        ],
+                        "description": "Tipo de desconto"
+                    },
+                    "discountPercentage": {
+                        "type": "string",
+                        "description": "Percentual de desconto (decimal como string)"
+                    },
+                    "product": {
+                        "$ref": "#/components/schemas/Product"
+                    }
+                }
+            },
+            "LoginRequest": {
+                "type": "object",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Email do usuário"
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 6,
+                        "description": "Senha do usuário"
+                    }
+                }
+            },
+            "RegisterRequest": {
+                "type": "object",
+                "required": [
+                    "email",
+                    "password",
+                    "name",
+                    "role"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Email do usuário"
+                    },
+                    "password": {
+                        "type": "string",
+                        "minLength": 6,
+                        "description": "Senha do usuário"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 2,
+                        "description": "Nome completo do usuário"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "admin",
+                            "manager",
+                            "employee"
+                        ],
+                        "description": "Papel do usuário no sistema"
+                    }
+                }
+            },
+            "CreateCustomerRequest": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "email",
+                    "phone",
+                    "cpf"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "minLength": 2,
+                        "description": "Nome completo do cliente"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Email do cliente"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "description": "Telefone do cliente"
+                    },
+                    "cpf": {
+                        "type": "string",
+                        "pattern": "^[0-9]{3}\\.?[0-9]{3}\\.?[0-9]{3}-?[0-9]{2}$",
+                        "description": "CPF do cliente (com ou sem formatação)"
+                    },
+                    "address": {
+                        "type": "string",
+                        "description": "Endereço completo do cliente"
+                    }
+                }
+            },
+            "CreateProductRequest": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "unit",
+                    "purchasePrice",
+                    "salePrice",
+                    "saleType"
+                ],
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "description": "Código do produto (se não fornecido, será gerado automaticamente)"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 2,
+                        "description": "Nome do produto"
+                    },
+                    "unit": {
+                        "type": "string",
+                        "description": "Unidade de medida"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Descrição do produto"
+                    },
+                    "stock": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "Quantidade inicial em estoque"
+                    },
+                    "purchasePrice": {
+                        "type": "string",
+                        "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                        "description": "Preço de compra"
+                    },
+                    "salePrice": {
+                        "type": "string",
+                        "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                        "description": "Preço de venda"
+                    },
+                    "saleType": {
+                        "type": "string",
+                        "description": "Tipo de venda"
+                    }
+                }
+            },
+            "CreatePreSaleRequest": {
+                "type": "object",
+                "required": [
+                    "customerId",
+                    "status",
+                    "items"
+                ],
+                "properties": {
+                    "customerId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID do cliente"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "draft",
+                            "pending",
+                            "approved",
+                            "cancelled",
+                            "converted"
+                        ],
+                        "description": "Status inicial da pré-venda"
+                    },
+                    "discount": {
+                        "type": "string",
+                        "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                        "description": "Desconto da pré-venda"
+                    },
+                    "discountType": {
+                        "type": "string",
+                        "enum": [
+                            "fixed",
+                            "percentage"
+                        ],
+                        "description": "Tipo de desconto"
+                    },
+                    "discountPercentage": {
+                        "type": "string",
+                        "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                        "description": "Percentual de desconto"
+                    },
+                    "notes": {
+                        "type": "string",
+                        "description": "Observações da pré-venda"
+                    },
+                    "items": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "productId",
+                                "quantity",
+                                "unitPrice"
+                            ],
+                            "properties": {
+                                "productId": {
+                                    "type": "string",
+                                    "format": "uuid",
+                                    "description": "ID do produto"
+                                },
+                                "quantity": {
+                                    "type": "string",
+                                    "pattern": "^[0-9]+(\\.[0-9]{1,3})?$",
+                                    "description": "Quantidade do produto"
+                                },
+                                "unitPrice": {
+                                    "type": "string",
+                                    "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                                    "description": "Preço unitário"
+                                },
+                                "discount": {
+                                    "type": "string",
+                                    "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                                    "description": "Desconto do item"
+                                },
+                                "discountType": {
+                                    "type": "string",
+                                    "enum": [
+                                        "fixed",
+                                        "percentage"
+                                    ],
+                                    "description": "Tipo de desconto do item"
+                                },
+                                "discountPercentage": {
+                                    "type": "string",
+                                    "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                                    "description": "Percentual de desconto do item"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "SuccessResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "type": "object",
+                        "description": "Dados da resposta"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Mensagem de sucesso"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Timestamp da resposta"
+                    }
+                }
+            },
+            "PaginatedResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        },
+                        "description": "Array de dados"
+                    },
+                    "pagination": {
+                        "type": "object",
+                        "properties": {
+                            "total": {
+                                "type": "integer",
+                                "description": "Total de registros"
+                            },
+                            "page": {
+                                "type": "integer",
+                                "description": "Página atual"
+                            },
+                            "limit": {
+                                "type": "integer",
+                                "description": "Itens por página"
+                            },
+                            "totalPages": {
+                                "type": "integer",
+                                "description": "Total de páginas"
+                            },
+                            "hasNext": {
+                                "type": "boolean",
+                                "description": "Tem próxima página"
+                            },
+                            "hasPrev": {
+                                "type": "boolean",
+                                "description": "Tem página anterior"
+                            }
+                        }
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Mensagem de sucesso"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Timestamp da resposta"
+                    }
+                }
+            },
+            "ErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "error": {
+                        "type": "object",
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "description": "Código do erro"
+                            },
+                            "message": {
+                                "type": "string",
+                                "description": "Mensagem do erro"
+                            },
+                            "details": {
+                                "type": "object",
+                                "description": "Detalhes adicionais do erro"
+                            }
+                        }
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Timestamp da resposta"
+                    },
+                    "path": {
+                        "type": "string",
+                        "description": "Caminho da requisição"
+                    }
+                }
+            },
+            "PriceCalculationRequest": {
+                "type": "object",
+                "required": [
+                    "quantity"
+                ],
+                "properties": {
+                    "quantity": {
+                        "type": "string",
+                        "pattern": "^[0-9]+(\\.[0-9]{1,3})?$",
+                        "description": "Quantidade do produto (número positivo como string)"
+                    },
+                    "basePrice": {
+                        "type": "string",
+                        "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                        "description": "Preço base opcional (número positivo como string)"
+                    },
+                    "customerId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID do cliente para descontos personalizados"
+                    },
+                    "applyPromotions": {
+                        "type": "boolean",
+                        "description": "Se deve aplicar promoções ativas",
+                        "default": true
+                    },
+                    "includeTaxes": {
+                        "type": "boolean",
+                        "description": "Se deve incluir impostos no cálculo",
+                        "default": true
+                    }
+                }
+            },
+            "PriceCalculationResult": {
+                "type": "object",
+                "properties": {
+                    "productId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID do produto"
+                    },
+                    "quantity": {
+                        "type": "number",
+                        "description": "Quantidade calculada"
+                    },
+                    "basePrice": {
+                        "type": "number",
+                        "description": "Preço base unitário"
+                    },
+                    "subtotal": {
+                        "type": "number",
+                        "description": "Subtotal (basePrice * quantity)"
+                    },
+                    "discounts": {
+                        "type": "object",
+                        "properties": {
+                            "customerDiscount": {
+                                "type": "number",
+                                "description": "Desconto do cliente"
+                            },
+                            "promotionalDiscount": {
+                                "type": "number",
+                                "description": "Desconto promocional"
+                            },
+                            "totalDiscount": {
+                                "type": "number",
+                                "description": "Desconto total"
+                            }
+                        }
+                    },
+                    "taxes": {
+                        "type": "object",
+                        "properties": {
+                            "amount": {
+                                "type": "number",
+                                "description": "Valor do imposto"
+                            },
+                            "rate": {
+                                "type": "number",
+                                "description": "Taxa de imposto (%)"
+                            }
+                        }
+                    },
+                    "finalPrice": {
+                        "type": "number",
+                        "description": "Preço final com descontos e impostos"
+                    },
+                    "margin": {
+                        "type": "object",
+                        "properties": {
+                            "amount": {
+                                "type": "number",
+                                "description": "Valor da margem"
+                            },
+                            "percentage": {
+                                "type": "number",
+                                "description": "Percentual da margem"
+                            }
+                        }
+                    },
+                    "markup": {
+                        "type": "object",
+                        "properties": {
+                            "amount": {
+                                "type": "number",
+                                "description": "Valor do markup"
+                            },
+                            "percentage": {
+                                "type": "number",
+                                "description": "Percentual do markup"
+                            }
+                        }
+                    },
+                    "calculationDetails": {
+                        "type": "object",
+                        "properties": {
+                            "cost": {
+                                "type": "number",
+                                "description": "Custo do produto"
+                            },
+                            "profit": {
+                                "type": "number",
+                                "description": "Lucro calculado"
+                            },
+                            "timestamp": {
+                                "type": "string",
+                                "format": "date-time",
+                                "description": "Timestamp do cálculo"
+                            }
+                        }
+                    }
+                }
+            },
+            "MarginMarkupRequest": {
+                "type": "object",
+                "required": [
+                    "cost",
+                    "sellingPrice"
+                ],
+                "properties": {
+                    "cost": {
+                        "type": "string",
+                        "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                        "description": "Custo do produto (número positivo como string)"
+                    },
+                    "sellingPrice": {
+                        "type": "string",
+                        "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                        "description": "Preço de venda (deve ser >= custo)"
+                    }
+                }
+            },
+            "MarginMarkupResult": {
+                "type": "object",
+                "properties": {
+                    "cost": {
+                        "type": "number",
+                        "description": "Custo do produto"
+                    },
+                    "sellingPrice": {
+                        "type": "number",
+                        "description": "Preço de venda"
+                    },
+                    "profit": {
+                        "type": "number",
+                        "description": "Lucro (sellingPrice - cost)"
+                    },
+                    "margin": {
+                        "type": "object",
+                        "properties": {
+                            "amount": {
+                                "type": "number",
+                                "description": "Valor da margem"
+                            },
+                            "percentage": {
+                                "type": "number",
+                                "description": "Percentual da margem"
+                            }
+                        }
+                    },
+                    "markup": {
+                        "type": "object",
+                        "properties": {
+                            "amount": {
+                                "type": "number",
+                                "description": "Valor do markup"
+                            },
+                            "percentage": {
+                                "type": "number",
+                                "description": "Percentual do markup"
+                            }
+                        }
+                    }
+                }
+            },
+            "PriceSuggestionRequest": {
+                "type": "object",
+                "properties": {
+                    "targetMargin": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 100,
+                        "description": "Margem alvo em percentual (0-100). Não pode ser usado com targetMarkup."
+                    },
+                    "targetMarkup": {
+                        "type": "number",
+                        "minimum": 0,
+                        "description": "Markup alvo em percentual (>= 0). Não pode ser usado com targetMargin."
+                    },
+                    "customerId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID do cliente para cálculos personalizados"
+                    },
+                    "quantity": {
+                        "type": "string",
+                        "pattern": "^[0-9]+(\\.[0-9]{1,3})?$",
+                        "description": "Quantidade para cálculos baseados em volume",
+                        "default": "1"
+                    }
+                },
+                "oneOf": [
+                    {
+                        "required": [
+                            "targetMargin"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "targetMarkup"
+                        ]
+                    }
+                ]
+            },
+            "PriceSuggestionResult": {
+                "type": "object",
+                "properties": {
+                    "productId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID do produto"
+                    },
+                    "suggestedPrice": {
+                        "type": "number",
+                        "description": "Preço sugerido"
+                    },
+                    "currentPrice": {
+                        "type": "number",
+                        "description": "Preço atual do produto"
+                    },
+                    "cost": {
+                        "type": "number",
+                        "description": "Custo do produto"
+                    },
+                    "projectedMargin": {
+                        "type": "object",
+                        "properties": {
+                            "amount": {
+                                "type": "number",
+                                "description": "Valor da margem projetada"
+                            },
+                            "percentage": {
+                                "type": "number",
+                                "description": "Percentual da margem projetada"
+                            }
+                        }
+                    },
+                    "projectedMarkup": {
+                        "type": "object",
+                        "properties": {
+                            "amount": {
+                                "type": "number",
+                                "description": "Valor do markup projetado"
+                            },
+                            "percentage": {
+                                "type": "number",
+                                "description": "Percentual do markup projetado"
+                            }
+                        }
+                    },
+                    "recommendations": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Recomendações baseadas no cálculo"
+                    }
+                }
+            },
+            "CacheStats": {
+                "type": "object",
+                "properties": {
+                    "caches": {
+                        "type": "object",
+                        "properties": {
+                            "product": {
+                                "type": "object",
+                                "properties": {
+                                    "totalEntries": {
+                                        "type": "number",
+                                        "description": "Total de entradas no cache"
+                                    },
+                                    "hitCount": {
+                                        "type": "number",
+                                        "description": "Número de hits do cache"
+                                    },
+                                    "missCount": {
+                                        "type": "number",
+                                        "description": "Número de misses do cache"
+                                    },
+                                    "hitRate": {
+                                        "type": "number",
+                                        "description": "Taxa de hit do cache (%)"
+                                    },
+                                    "memoryUsage": {
+                                        "type": "number",
+                                        "description": "Uso de memória em bytes"
+                                    }
+                                }
+                            },
+                            "customer": {
+                                "type": "object",
+                                "description": "Estatísticas do cache de clientes"
+                            },
+                            "calculation": {
+                                "type": "object",
+                                "description": "Estatísticas do cache de cálculos"
+                            },
+                            "promotion": {
+                                "type": "object",
+                                "description": "Estatísticas do cache de promoções"
+                            },
+                            "totalMemoryUsage": {
+                                "type": "number",
+                                "description": "Uso total de memória dos caches"
+                            }
+                        }
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "recommendations": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Recomendações de otimização"
+                    }
+                }
+            },
+            "DatabaseHealth": {
+                "type": "object",
+                "properties": {
+                    "health": {
+                        "type": "object",
+                        "properties": {
+                            "status": {
+                                "type": "string",
+                                "enum": [
+                                    "healthy",
+                                    "degraded",
+                                    "unhealthy"
+                                ],
+                                "description": "Status da saúde do banco"
+                            },
+                            "responseTime": {
+                                "type": "number",
+                                "description": "Tempo de resposta em ms"
+                            },
+                            "error": {
+                                "type": "string",
+                                "description": "Mensagem de erro se houver"
+                            }
+                        }
+                    },
+                    "analysis": {
+                        "type": "object",
+                        "properties": {
+                            "recommendations": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "Recomendações de otimização"
+                            },
+                            "cacheStats": {
+                                "type": "object",
+                                "description": "Estatísticas relacionadas ao cache"
+                            }
+                        }
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "AuditStats": {
+                "type": "object",
+                "properties": {
+                    "audit": {
+                        "type": "object",
+                        "properties": {
+                            "totalRequests": {
+                                "type": "number",
+                                "description": "Total de requisições auditadas"
+                            },
+                            "successRate": {
+                                "type": "number",
+                                "description": "Taxa de sucesso (%)"
+                            },
+                            "averageResponseTime": {
+                                "type": "number",
+                                "description": "Tempo médio de resposta em ms"
+                            },
+                            "errorRate": {
+                                "type": "number",
+                                "description": "Taxa de erro (%)"
+                            }
+                        }
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "SystemMetrics": {
+                "type": "object",
+                "properties": {
+                    "system": {
+                        "type": "object",
+                        "properties": {
+                            "uptime": {
+                                "type": "number",
+                                "description": "Tempo de atividade em segundos"
+                            },
+                            "uptimeFormatted": {
+                                "type": "string",
+                                "description": "Tempo de atividade formatado"
+                            },
+                            "memory": {
+                                "type": "object",
+                                "properties": {
+                                    "rss": {
+                                        "type": "number",
+                                        "description": "Memória RSS em MB"
+                                    },
+                                    "heapUsed": {
+                                        "type": "number",
+                                        "description": "Heap usado em MB"
+                                    },
+                                    "heapTotal": {
+                                        "type": "number",
+                                        "description": "Heap total em MB"
+                                    },
+                                    "external": {
+                                        "type": "number",
+                                        "description": "Memória externa em MB"
+                                    }
+                                }
+                            },
+                            "nodeVersion": {
+                                "type": "string",
+                                "description": "Versão do Node.js"
+                            },
+                            "platform": {
+                                "type": "string",
+                                "description": "Plataforma do sistema"
+                            },
+                            "arch": {
+                                "type": "string",
+                                "description": "Arquitetura do sistema"
+                            }
+                        }
+                    },
+                    "cache": {
+                        "type": "object",
+                        "description": "Estatísticas do cache"
+                    },
+                    "database": {
+                        "type": "object",
+                        "description": "Saúde do banco de dados"
+                    },
+                    "audit": {
+                        "type": "object",
+                        "description": "Estatísticas de auditoria"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "recommendations": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Recomendações de otimização do sistema"
+                    }
+                }
+            }
+        }
+    },
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ],
+    "paths": {
+        "/health": {
+            "get": {
+                "tags": [
+                    "System"
+                ],
+                "summary": "Health check",
+                "description": "Verifica se a API está funcionando corretamente. Esta rota é essencial para monitoramento de infraestrutura, permitindo que sistemas de load balancer, orquestradores (como Kubernetes) e ferramentas de monitoramento verifiquem se o serviço está operacional. Não requer autenticação e retorna informações básicas sobre o status do sistema, versão da aplicação e ambiente de execução. Ideal para uso em health checks automatizados e dashboards de monitoramento.",
+                "security": [],
+                "responses": {
+                    "200": {
+                        "description": "API funcionando corretamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "ok"
+                                        },
+                                        "timestamp": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "environment": {
+                                            "type": "string",
+                                            "example": "development"
+                                        },
+                                        "version": {
+                                            "type": "string",
+                                            "example": "1.0.0"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login de usuário",
+                "description": "Autentica um usuário no sistema Flow CRM através de email e senha, retornando um token JWT para acesso às rotas protegidas. O sistema valida as credenciais contra o banco de dados, verifica se o usuário está ativo e gera um token com informações do usuário (ID, role, etc.). Este token deve ser incluído no header Authorization das próximas requisições. Aplicação: Tela de login do sistema, autenticação de usuários em aplicações web e mobile, integração com sistemas terceiros que precisam acessar a API.",
+                "security": [],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login realizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "user": {
+                                                            "$ref": "#/components/schemas/User"
+                                                        },
+                                                        "token": {
+                                                            "type": "string",
+                                                            "description": "Token JWT"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciais inválidas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/me": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Perfil do usuário atual",
+                "description": "Retorna os dados completos do usuário autenticado baseado no token JWT fornecido. Valida o token, extrai as informações do usuário e retorna dados atualizados do banco de dados. Útil para verificar se o token ainda é válido, obter informações atuais do usuário (nome, role, permissões) e personalizar a interface baseada no perfil. Aplicação: Carregamento inicial de dados do usuário logado, validação de sessão, personalização de menus e funcionalidades baseadas no role do usuário, atualização de dados de perfil em tempo real.",
+                "responses": {
+                    "200": {
+                        "description": "Dados do usuário",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/User"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Token inválido ou expirado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Registro de usuário (Admin apenas)",
+                "description": "Cria um novo usuário no sistema Flow CRM com validação de permissões administrativas. Apenas usuários com role 'admin' podem criar novos usuários. O sistema valida se o email já existe, criptografa a senha usando bcrypt, define o role apropriado e cria o registro no banco de dados. Inclui validações de formato de email, força da senha e unicidade de dados. Aplicação: Tela administrativa para cadastro de funcionários, onboarding de novos colaboradores, gestão de equipes por administradores, integração com sistemas de RH para criação automática de contas.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usuário criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/User"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Acesso negado - apenas administradores",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Email já existe",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout do usuário",
+                "description": "Realiza o logout do usuário no sistema. Como utilizamos JWT stateless, o servidor apenas confirma o logout e o cliente deve remover o token do armazenamento local. Em implementações futuras, pode incluir blacklist de tokens para invalidação imediata. Registra o evento de logout para auditoria e segurança. Aplicação: Botão de logout em interfaces web e mobile, encerramento seguro de sessões, limpeza de dados sensíveis do cliente, registro de atividades de segurança para compliance.",
+                "responses": {
+                    "200": {
+                        "description": "Logout realizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuccessResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/customers": {
+            "get": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Listar clientes",
+                "description": "Retorna uma lista paginada de clientes com recursos avançados de filtragem e ordenação. Permite busca por nome, email, CPF ou busca global que pesquisa em todos os campos simultaneamente. Inclui paginação para performance em grandes volumes de dados, ordenação customizável e filtros específicos. Aplicação: Tela principal de gestão de clientes, seleção de clientes em pré-vendas, relatórios de base de clientes, integração com sistemas de CRM, busca rápida de clientes durante atendimento, exportação de listas para marketing.",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Número da página",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Itens por página",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 100,
+                            "default": 50
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Campo para ordenação",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "name",
+                                "email",
+                                "createdAt"
+                            ],
+                            "default": "name"
+                        }
+                    },
+                    {
+                        "name": "sortOrder",
+                        "in": "query",
+                        "description": "Ordem da classificação",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ],
+                            "default": "asc"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Filtrar por nome (busca parcial)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "Filtrar por email (busca parcial)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "cpf",
+                        "in": "query",
+                        "description": "Filtrar por CPF (busca parcial)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Busca global (nome, email ou CPF)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de clientes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/PaginatedResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Customer"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Criar cliente",
+                "description": "Cadastra um novo cliente no sistema com validação completa de dados. Verifica unicidade de CPF e email, valida formato do CPF brasileiro, normaliza dados de entrada e cria o registro no banco de dados. Inclui validações de formato de email, telefone e endereço. Aplicação: Formulário de cadastro de novos clientes, importação em lote de clientes, integração com sistemas de e-commerce para criação automática de clientes, cadastro durante processo de venda, onboarding de clientes via API.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateCustomerRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Cliente criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Customer"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "CPF inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "CPF ou email já existe",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/customers/{id}": {
+            "get": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Buscar cliente por ID",
+                "description": "Recupera os dados completos de um cliente específico através do seu ID único. Retorna todas as informações cadastrais incluindo histórico de atualizações. Utiliza cache para otimizar performance em consultas frequentes. Aplicação: Tela de detalhes do cliente, edição de dados cadastrais, consulta durante criação de pré-vendas, integração com sistemas de atendimento, validação de dados em processos de venda, relatórios individuais de cliente.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID do cliente",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cliente encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Customer"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cliente não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Atualizar cliente",
+                "description": "Atualiza os dados cadastrais de um cliente existente com validação de integridade. Verifica se CPF e email não conflitam com outros clientes, mantém histórico de alterações para auditoria e valida todos os campos modificados. Permite atualização parcial ou completa dos dados. Aplicação: Formulário de edição de clientes, correção de dados cadastrais, atualização em lote via importação, sincronização com sistemas externos, manutenção de dados por atendimento ao cliente.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID do cliente",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "minLength": 2,
+                                        "description": "Nome completo do cliente"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "description": "Email do cliente"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "description": "Telefone do cliente"
+                                    },
+                                    "cpf": {
+                                        "type": "string",
+                                        "pattern": "^[0-9]{3}\\.?[0-9]{3}\\.?[0-9]{3}-?[0-9]{2}$",
+                                        "description": "CPF do cliente"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "description": "Endereço do cliente"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cliente atualizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Customer"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cliente não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "CPF ou email já existe",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Excluir cliente",
+                "description": "Remove um cliente do sistema com verificação de integridade referencial. Antes da exclusão, verifica se o cliente possui pré-vendas ativas ou histórico de transações que impeçam a remoção. Implementa soft delete para manter histórico quando necessário. Registra a ação para auditoria e compliance. Aplicação: Limpeza de base de dados, remoção de clientes inativos, correção de cadastros duplicados, gestão de LGPD (direito ao esquecimento), manutenção de base de dados limpa.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID do cliente",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Cliente excluído com sucesso"
+                    },
+                    "404": {
+                        "description": "Cliente não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Cliente possui pré-vendas ativas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/products": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Listar produtos",
+                "description": "Retorna lista paginada de produtos com filtros avançados e ordenação customizável. Permite busca por nome, código, tipo de venda ou busca global em múltiplos campos. Inclui informações de estoque, preços e dados técnicos. Otimizado com cache para consultas frequentes. Aplicação: Catálogo de produtos, seleção de itens em pré-vendas, gestão de estoque, relatórios de produtos, integração com e-commerce, consulta de preços durante vendas, análise de margem de produtos.",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Número da página",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Itens por página",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 100,
+                            "default": 50
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Campo para ordenação",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "name",
+                                "code",
+                                "createdAt"
+                            ],
+                            "default": "name"
+                        }
+                    },
+                    {
+                        "name": "sortOrder",
+                        "in": "query",
+                        "description": "Ordem da classificação",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ],
+                            "default": "asc"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Filtrar por nome (busca parcial)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "code",
+                        "in": "query",
+                        "description": "Filtrar por código (busca parcial)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "saleType",
+                        "in": "query",
+                        "description": "Filtrar por tipo de venda",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Busca global (nome, código ou descrição)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de produtos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/PaginatedResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Product"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Criar produto",
+                "description": "Cadastra um novo produto no sistema com validação completa de dados comerciais. Gera código único automaticamente se não fornecido, valida preços de compra e venda, define unidades de medida e calcula margens iniciais. Inclui validação de dados obrigatórios e formatos de preço. Aplicação: Cadastro de novos produtos, importação de catálogos, integração com fornecedores, lançamento de produtos, gestão de portfólio, sincronização com sistemas ERP.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateProductRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Produto criado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Product"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Código do produto já existe",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/products/{id}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Buscar produto por ID",
+                "description": "Recupera dados completos de um produto específico incluindo preços, estoque, margens e histórico. Utiliza cache inteligente para otimizar consultas frequentes durante processos de venda. Retorna informações técnicas, comerciais e de estoque atualizadas. Aplicação: Detalhes do produto em telas de venda, cálculo de preços em pré-vendas, consulta de estoque disponível, edição de dados do produto, integração com sistemas de precificação.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID do produto",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produto encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Product"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Produto não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Atualizar produto",
+                "description": "Atualiza dados de um produto existente mantendo integridade referencial. O código do produto é imutável para preservar histórico de vendas. Permite atualização de preços, estoque, descrições e dados técnicos. Recalcula automaticamente margens quando preços são alterados. Registra alterações para auditoria. Aplicação: Ajuste de preços, atualização de estoque, correção de dados técnicos, manutenção de catálogo, sincronização com fornecedores, gestão de promoções.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID do produto",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "minLength": 2,
+                                        "description": "Nome do produto"
+                                    },
+                                    "unit": {
+                                        "type": "string",
+                                        "description": "Unidade de medida"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "description": "Descrição do produto"
+                                    },
+                                    "stock": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "description": "Quantidade em estoque"
+                                    },
+                                    "purchasePrice": {
+                                        "type": "string",
+                                        "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                                        "description": "Preço de compra"
+                                    },
+                                    "salePrice": {
+                                        "type": "string",
+                                        "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                                        "description": "Preço de venda"
+                                    },
+                                    "saleType": {
+                                        "type": "string",
+                                        "description": "Tipo de venda"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Produto atualizado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Product"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Produto não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Excluir produto",
+                "description": "Remove um produto do sistema com verificação de dependências. Verifica se o produto possui pré-vendas ativas, histórico de vendas ou está referenciado em outros processos antes da exclusão. Implementa soft delete quando há dependências históricas. Aplicação: Descontinuação de produtos, limpeza de catálogo, remoção de produtos duplicados, gestão de ciclo de vida de produtos, manutenção de base de dados.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID do produto",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Produto excluído com sucesso"
+                    },
+                    "404": {
+                        "description": "Produto não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Produto possui pré-vendas ativas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/presales": {
+            "get": {
+                "tags": [
+                    "PreSales"
+                ],
+                "summary": "Listar pré-vendas",
+                "description": "Retorna lista paginada de pré-vendas com filtros por status, cliente e período. Inclui dados do cliente e resumo dos itens para visão geral rápida. Permite ordenação por data, valor total ou status. Otimizada para dashboards e relatórios gerenciais. Aplicação: Dashboard de vendas, acompanhamento de pipeline comercial, relatórios gerenciais, análise de performance de vendas, gestão de propostas pendentes, controle de aprovações.",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Número da página",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Itens por página",
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 100,
+                            "default": 50
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "description": "Campo para ordenação",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "createdAt",
+                                "total",
+                                "status"
+                            ],
+                            "default": "createdAt"
+                        }
+                    },
+                    {
+                        "name": "sortOrder",
+                        "in": "query",
+                        "description": "Ordem da classificação",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "asc",
+                                "desc"
+                            ],
+                            "default": "desc"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filtrar por status",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "draft",
+                                "pending",
+                                "approved",
+                                "cancelled",
+                                "converted"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "customerId",
+                        "in": "query",
+                        "description": "Filtrar por ID do cliente",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de pré-vendas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/PaginatedResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/PreSale"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "PreSales"
+                ],
+                "summary": "Criar pré-venda",
+                "description": "Cria uma nova pré-venda com validação completa de produtos, cliente e cálculos automáticos. Verifica disponibilidade de estoque, aplica descontos por cliente, calcula impostos e totais automaticamente. Valida integridade dos dados e consistência dos cálculos. Aplicação: Processo de vendas, criação de orçamentos, propostas comerciais, cotações para clientes, registro de intenções de compra, pipeline de vendas.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreatePreSaleRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Pré-venda criada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PreSale"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Cliente ou produto não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/presales/{id}": {
+            "get": {
+                "tags": [
+                    "PreSales"
+                ],
+                "summary": "Buscar pré-venda por ID",
+                "description": "Recupera dados completos de uma pré-venda incluindo todos os itens, dados do cliente, histórico de alterações e cálculos detalhados. Inclui informações de produtos com preços atuais e aplicação de descontos. Aplicação: Visualização detalhada de propostas, edição de pré-vendas, aprovação de orçamentos, impressão de propostas, análise de margem por item, acompanhamento de negociações.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID da pré-venda",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pré-venda encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PreSale"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pré-venda não encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "PreSales"
+                ],
+                "summary": "Atualizar pré-venda",
+                "description": "Atualiza dados de uma pré-venda existente incluindo itens, descontos e observações. Recalcula automaticamente totais, impostos e margens quando itens são modificados. Valida regras de negócio e mantém histórico de alterações. Permite adição, remoção e modificação de itens. Aplicação: Edição de propostas, ajuste de quantidades e preços, aplicação de descontos especiais, correção de dados, negociação com clientes.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID da pré-venda",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "draft",
+                                            "pending",
+                                            "approved",
+                                            "cancelled",
+                                            "converted"
+                                        ],
+                                        "description": "Status da pré-venda"
+                                    },
+                                    "discount": {
+                                        "type": "string",
+                                        "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                                        "description": "Desconto da pré-venda"
+                                    },
+                                    "discountType": {
+                                        "type": "string",
+                                        "enum": [
+                                            "fixed",
+                                            "percentage"
+                                        ],
+                                        "description": "Tipo de desconto"
+                                    },
+                                    "discountPercentage": {
+                                        "type": "string",
+                                        "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                                        "description": "Percentual de desconto"
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "description": "Observações da pré-venda"
+                                    },
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "required": [
+                                                "productId",
+                                                "quantity",
+                                                "unitPrice"
+                                            ],
+                                            "properties": {
+                                                "productId": {
+                                                    "type": "string",
+                                                    "format": "uuid",
+                                                    "description": "ID do produto"
+                                                },
+                                                "quantity": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9]+(\\.[0-9]{1,3})?$",
+                                                    "description": "Quantidade do produto"
+                                                },
+                                                "unitPrice": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                                                    "description": "Preço unitário"
+                                                },
+                                                "discount": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                                                    "description": "Desconto do item"
+                                                },
+                                                "discountType": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "fixed",
+                                                        "percentage"
+                                                    ],
+                                                    "description": "Tipo de desconto do item"
+                                                },
+                                                "discountPercentage": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9]+(\\.[0-9]{1,2})?$",
+                                                    "description": "Percentual de desconto do item"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Pré-venda atualizada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PreSale"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pré-venda não encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "PreSales"
+                ],
+                "summary": "Excluir pré-venda",
+                "description": "Remove uma pré-venda e todos os seus itens do sistema. Verifica se a pré-venda pode ser excluída baseado no status atual (não permite exclusão de vendas convertidas). Remove em cascata todos os itens relacionados e registra a ação para auditoria. Aplicação: Cancelamento de propostas, limpeza de rascunhos antigos, correção de pré-vendas duplicadas, gestão de pipeline de vendas.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID da pré-venda",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Pré-venda excluída com sucesso"
+                    },
+                    "404": {
+                        "description": "Pré-venda não encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/presales/{id}/status": {
+            "put": {
+                "tags": [
+                    "PreSales"
+                ],
+                "summary": "Alterar status da pré-venda",
+                "description": "Altera o status de uma pré-venda seguindo regras de transição de estados. Valida se a mudança de status é permitida (ex: não pode voltar de 'converted' para 'draft'). Registra histórico de mudanças para auditoria e notifica sistemas integrados. Aplicação: Workflow de aprovação de vendas, controle de pipeline comercial, gestão de propostas, automação de processos de venda, integração com sistemas de aprovação.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID da pré-venda",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "draft",
+                                            "pending",
+                                            "approved",
+                                            "cancelled",
+                                            "converted"
+                                        ],
+                                        "description": "Novo status da pré-venda"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Status alterado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PreSale"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Transição de status inválida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pré-venda não encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/products/{id}/calculate-price": {
+            "post": {
+                "tags": [
+                    "Price Calculation"
+                ],
+                "summary": "Calcular preço do produto",
+                "description": "Realiza cálculo abrangente de preço para um produto específico considerando quantidade, descontos personalizados por cliente, promoções ativas, impostos e análise de margem/markup. O sistema busca o produto, aplica regras de desconto baseadas no cliente, calcula impostos conforme legislação, e retorna análise completa de rentabilidade. Inclui cache inteligente para otimizar performance em cálculos repetitivos. Aplicação: Cotações em tempo real durante vendas, cálculo de preços em pré-vendas, análise de margem por cliente, simulação de cenários de preço, integração com sistemas de e-commerce, precificação dinâmica.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID do produto",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PriceCalculationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Preço calculado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PriceCalculationResult"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Produto não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Muitas requisições",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/price/margin-markup": {
+            "post": {
+                "tags": [
+                    "Price Calculation"
+                ],
+                "summary": "Calcular margem e markup",
+                "description": "Calcula margem de lucro e markup percentual a partir de valores de custo e preço de venda fornecidos. Realiza validações para garantir que o preço de venda seja maior ou igual ao custo, calcula o lucro bruto, margem percentual (lucro/preço de venda) e markup percentual (lucro/custo). Ferramenta essencial para análise de rentabilidade e definição de estratégias de preço. Aplicação: Análise de rentabilidade de produtos, definição de políticas de preço, comparação de margens entre produtos, relatórios financeiros, auditoria de preços, treinamento de equipe comercial sobre rentabilidade.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MarginMarkupRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Margem e markup calculados com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/MarginMarkupResult"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Muitas requisições",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/products/{id}/suggest-price": {
+            "post": {
+                "tags": [
+                    "Price Calculation"
+                ],
+                "summary": "Sugerir preço ótimo",
+                "description": "Calcula e sugere preço de venda ótimo para atingir margem ou markup desejado. Baseado no custo do produto e meta de rentabilidade, calcula o preço ideal, compara com preço atual, projeta impacto na margem e fornece recomendações estratégicas. Considera fatores como volume de venda, perfil do cliente e posicionamento de mercado. Aplicação: Definição de estratégias de preço, ajuste de preços para atingir metas de margem, análise de impacto de mudanças de preço, precificação de novos produtos, otimização de rentabilidade, negociação com base em margens mínimas.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID do produto",
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PriceSuggestionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sugestão de preço calculada com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/PriceSuggestionResult"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Parâmetros inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Produto não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "Muitas requisições",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/monitoring/cache-stats": {
+            "get": {
+                "tags": [
+                    "Monitoring"
+                ],
+                "summary": "Estatísticas do cache",
+                "description": "Fornece métricas detalhadas de performance de todos os caches do sistema (produtos, clientes, cálculos, promoções). Inclui taxa de hit/miss, uso de memória, número de entradas e recomendações de otimização. Essencial para monitoramento de performance e identificação de gargalos. Aplicação: Monitoramento de performance do sistema, otimização de cache, identificação de padrões de uso, ajuste de TTL de cache, diagnóstico de problemas de performance, relatórios de infraestrutura, alertas de uso excessivo de memória.",
+                "responses": {
+                    "200": {
+                        "description": "Estatísticas do cache recuperadas com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/CacheStats"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/monitoring/database-health": {
+            "get": {
+                "tags": [
+                    "Monitoring"
+                ],
+                "summary": "Saúde do banco de dados",
+                "description": "Monitora a saúde e performance do banco de dados através de testes de conectividade, tempo de resposta e análise de queries. Identifica problemas de performance, conexões lentas e fornece recomendações de otimização. Inclui análise de índices e sugestões de melhoria. Aplicação: Monitoramento proativo de infraestrutura, alertas de problemas de banco, otimização de performance, planejamento de capacidade, diagnóstico de lentidão, manutenção preventiva, relatórios de SLA de banco de dados.",
+                "responses": {
+                    "200": {
+                        "description": "Status de saúde do banco recuperado com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/DatabaseHealth"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/monitoring/audit-stats": {
+            "get": {
+                "tags": [
+                    "Monitoring"
+                ],
+                "summary": "Estatísticas de auditoria",
+                "description": "Fornece métricas consolidadas dos logs de auditoria incluindo total de requisições, taxa de sucesso, tempo médio de resposta e taxa de erros. Essencial para monitoramento de qualidade do serviço e identificação de padrões de uso. Aplicação: Relatórios de qualidade de serviço, monitoramento de SLA, identificação de picos de uso, análise de padrões de erro, compliance e auditoria, métricas para dashboards executivos, alertas de degradação de serviço.",
+                "responses": {
+                    "200": {
+                        "description": "Estatísticas de auditoria recuperadas com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/AuditStats"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/monitoring/system-metrics": {
+            "get": {
+                "tags": [
+                    "Monitoring"
+                ],
+                "summary": "Métricas do sistema",
+                "description": "Consolida todas as métricas do sistema em uma visão unificada incluindo uso de memória, tempo de atividade, performance de cache, saúde do banco e estatísticas de auditoria. Fornece recomendações inteligentes de otimização baseadas na análise dos dados coletados. Aplicação: Dashboard principal de monitoramento, relatórios executivos de infraestrutura, alertas consolidados, planejamento de capacidade, análise de tendências de uso, monitoramento de SLA, suporte a decisões de escalabilidade.",
+                "responses": {
+                    "200": {
+                        "description": "Métricas do sistema recuperadas com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "$ref": "#/components/schemas/SystemMetrics"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/monitoring/clear-caches": {
+            "post": {
+                "tags": [
+                    "Monitoring"
+                ],
+                "summary": "Limpar caches",
+                "description": "Remove todos os dados armazenados em cache (produtos, clientes, cálculos, promoções) forçando recarregamento dos dados do banco de dados nas próximas consultas. Útil para resolver problemas de dados desatualizados ou liberar memória. Registra a ação para auditoria. Aplicação: Resolução de problemas de dados inconsistentes, liberação de memória em situações críticas, manutenção programada, atualização forçada após mudanças importantes no banco, troubleshooting de performance.",
+                "responses": {
+                    "200": {
+                        "description": "Caches limpos com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "message": {
+                                                            "type": "string"
+                                                        },
+                                                        "timestamp": {
+                                                            "type": "string",
+                                                            "format": "date-time"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/monitoring/warm-up-caches": {
+            "post": {
+                "tags": [
+                    "Monitoring"
+                ],
+                "summary": "Aquecer caches",
+                "description": "Pré-carrega os caches com dados mais frequentemente acessados (produtos populares, clientes ativos, cálculos comuns) para otimizar performance das primeiras requisições após reinicialização do sistema. Analisa padrões de uso histórico para determinar quais dados carregar. Aplicação: Otimização pós-deploy, preparação para picos de tráfego, melhoria de performance após manutenção, redução de latência inicial, preparação para horários de maior movimento comercial.",
+                "responses": {
+                    "200": {
+                        "description": "Aquecimento de cache concluído com sucesso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/SuccessResponse"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "data": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "message": {
+                                                            "type": "string"
+                                                        },
+                                                        "timestamp": {
+                                                            "type": "string",
+                                                            "format": "date-time"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "System",
+            "description": "Endpoints do sistema"
+        },
+        {
+            "name": "Authentication",
+            "description": "Autenticação e autorização"
+        },
+        {
+            "name": "Customers",
+            "description": "Gerenciamento de clientes"
+        },
+        {
+            "name": "Products",
+            "description": "Gerenciamento de produtos"
+        },
+        {
+            "name": "PreSales",
+            "description": "Gerenciamento de pré-vendas"
+        },
+        {
+            "name": "Price Calculation",
+            "description": "Cálculos de preço, margem e markup"
+        },
+        {
+            "name": "Monitoring",
+            "description": "Monitoramento do sistema, cache e performance"
+        }
+    ]
+}

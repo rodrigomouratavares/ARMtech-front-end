@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+/* Toast customizations */
+.Toastify__toast-container {
+	z-index: 9999 !important;
+}
+
+.Toastify__toast {
+	font-family: inherit;
+}

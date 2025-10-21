@@ -1,0 +1,331 @@
+import { authDebugLog } from '../config/environment';
+import type {
+	LoginRequest,
+	LoginResponse,
+	RefreshTokenResponse,
+	User,
+} from '../types/api';
+import { tokenStorage } from '../utils/tokenStorage';
+import { httpClient } from './httpClient';
+
+export class AuthService {
+	private static instance: AuthService;
+
+	static getInstance(): AuthService {
+		if (!AuthService.instance) {
+			AuthService.instance = new AuthService();
+		}
+		return AuthService.instance;
+	}
+
+	/**
+	 * Authenticate user with email and password
+	 */
+	async login(credentials: LoginRequest): Promise<LoginResponse> {
+		try {
+			authDebugLog('Attempting login for user:', credentials.email);
+			console.log('Making login request...');
+
+			let responseData: any;
+
+			// Strategy 1: Try local Vercel proxy first
+			try {
+				console.log('Trying local Vercel proxy...');
+				const proxyUrl = '/api/proxy-login';
+				responseData = await this.makeXHRRequest(proxyUrl, credentials);
+				console.log('Local proxy successful:', responseData);
+			} catch (proxyError) {
+				console.warn('Local proxy failed:', proxyError);
+
+				// Strategy 2: Try direct connection
+				console.log('Trying direct XMLHttpRequest approach...');
+				const apiUrl =
+					'https://flow-crm-backend-58ub.onrender.com/api/auth/login';
+				responseData = await this.makeXHRRequest(apiUrl, credentials);
+				console.log('Direct XHR request successful:', responseData);
+			}
+
+			const loginData = responseData.data as LoginResponse;
+			console.log('Extracted login data:', loginData);
+
+			const { token, refreshToken, user } = loginData;
+			console.log('Destructured data:', {
+				hasToken: !!token,
+				hasRefreshToken: !!refreshToken,
+				hasUser: !!user,
+				userEmail: user?.email,
+			});
+
+			// Store tokens
+			httpClient.setAuthTokens(token, refreshToken || '');
+			console.log('Tokens stored successfully');
+
+			authDebugLog('Login successful for user:', user.email);
+			return loginData;
+		} catch (error) {
+			authDebugLog('Login failed:', error);
+			console.error('Login error details:', error);
+
+			if (error instanceof Error && error.message === 'Failed to fetch') {
+				throw new Error(
+					'Unable to connect to the server. Please check your internet connection and try again.',
+				);
+			}
+
+			throw error;
+		}
+	}
+
+	/**
+	 * Make request using XMLHttpRequest as fallback
+	 */
+	private async makeXHRRequest(
+		url: string,
+		credentials: LoginRequest,
+	): Promise<any> {
+		return new Promise((resolve, reject) => {
+			const xhr = new XMLHttpRequest();
+
+			xhr.open('POST', url, true);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			xhr.setRequestHeader('Accept', 'application/json');
+
+			xhr.onreadystatechange = () => {
+				if (xhr.readyState === 4) {
+					console.log('XHR status:', xhr.status);
+					console.log('XHR response:', xhr.responseText);
+
+					if (xhr.status === 200) {
+						try {
+							const responseData = JSON.parse(xhr.responseText);
+							resolve(responseData);
+						} catch (parseError) {
+							reject(new Error('Failed to parse response'));
+						}
+					} else {
+						reject(new Error(`HTTP ${xhr.status}: ${xhr.statusText}`));
+					}
+				}
+			};
+
+			xhr.onerror = () => {
+				console.error('XHR network error');
+				reject(new Error('Network error occurred'));
+			};
+
+			xhr.ontimeout = () => {
+				console.error('XHR timeout');
+				reject(new Error('Request timeout'));
+			};
+
+			xhr.timeout = 30000; // 30 second timeout
+
+			try {
+				console.log('Sending XHR request...');
+				xhr.send(JSON.stringify(credentials));
+			} catch (sendError) {
+				reject(sendError);
+			}
+		});
+	}
+
+	/**
+	 * Log out the current user
+	 */
+	async logout(): Promise<void> {
+		try {
+			authDebugLog('Attempting logout');
+
+			// Call the logout endpoint to invalidate the token on the server
+			await httpClient.post('/auth/logout');
+
+			authDebugLog('Server logout successful');
+		} catch (error) {
+			// Even if server logout fails, we should clear local tokens
+			authDebugLog('Server logout failed, but clearing local tokens:', error);
+		} finally {
+			// Always clear local tokens
+			httpClient.clearAuthTokens();
+
+			// Dispatch logout event for components to react
+			window.dispatchEvent(
+				new CustomEvent('auth:logout', {
+					detail: { reason: 'user_initiated' },
+				}),
+			);
+
+			authDebugLog('Local logout completed');
+		}
+	}
+
+	/**
+	 * Get current user profile
+	 */
+	async getCurrentUser(): Promise<User> {
+		try {
+			authDebugLog('Fetching current user profile');
+
+			const response = await httpClient.get<{ data: User }>('/auth/me');
+
+			authDebugLog('User profile fetched successfully:', response.data.email);
+			return response.data;
+		} catch (error) {
+			authDebugLog('Failed to fetch user profile:', error);
+			throw error;
+		}
+	}
+
+	/**
+	 * Refresh authentication token
+	 */
+	async refreshToken(): Promise<string> {
+		try {
+			authDebugLog('Refreshing authentication token');
+
+			const response = await httpClient.post<{ data: RefreshTokenResponse }>(
+				'/auth/refresh',
+			);
+
+			const { token } = response.data;
+			authDebugLog('Token refresh successful');
+			return token;
+		} catch (error) {
+			authDebugLog('Token refresh failed:', error);
+
+			// Clear tokens on refresh failure
+			httpClient.clearAuthTokens();
+
+			// Dispatch logout event
+			window.dispatchEvent(
+				new CustomEvent('auth:logout', {
+					detail: { reason: 'token_refresh_failed' },
+				}),
+			);
+
+			throw error;
+		}
+	}
+
+	/**
+	 * Check if user is currently authenticated
+	 */
+	isAuthenticated(): boolean {
+		const token = tokenStorage.getToken();
+
+		if (!token) {
+			return false;
+		}
+
+		try {
+			// Parse JWT token to check expiration
+			const payload = JSON.parse(atob(token.split('.')[1]));
+			const currentTime = Date.now() / 1000;
+
+			// Check if token is not expired
+			const isValid = payload.exp > currentTime;
+
+			authDebugLog('Token validation result:', {
+				isValid,
+				expiresAt: new Date(payload.exp * 1000),
+			});
+
+			return isValid;
+		} catch (error) {
+			authDebugLog('Token validation error:', error);
+			return false;
+		}
+	}
+
+	/**
+	 * Get current user from stored token (without API call)
+	 */
+	getCurrentUserFromToken(): User | null {
+		const token = tokenStorage.getToken();
+
+		if (!token) {
+			return null;
+		}
+
+		try {
+			const payload = JSON.parse(atob(token.split('.')[1]));
+
+			// Extract user information from token payload
+			if (payload.user) {
+				return payload.user as User;
+			}
+
+			return null;
+		} catch (error) {
+			authDebugLog('Error extracting user from token:', error);
+			return null;
+		}
+	}
+
+	/**
+	 * Validate current session and refresh if needed
+	 */
+	async validateSession(): Promise<boolean> {
+		try {
+			if (!this.isAuthenticated()) {
+				authDebugLog('No valid token found');
+				return false;
+			}
+
+			// Try to fetch current user to validate session
+			await this.getCurrentUser();
+			authDebugLog('Session validation successful');
+			return true;
+		} catch (error) {
+			authDebugLog('Session validation failed:', error);
+
+			// Clear invalid tokens
+			httpClient.clearAuthTokens();
+
+			return false;
+		}
+	}
+
+	/**
+	 * Initialize authentication state on app startup
+	 */
+	async initializeAuth(): Promise<User | null> {
+		try {
+			authDebugLog('Initializing authentication state');
+
+			// Check if we have a token
+			const token = tokenStorage.getToken();
+			authDebugLog('Token found in storage:', token ? 'YES' : 'NO');
+
+			if (!this.isAuthenticated()) {
+				authDebugLog(
+					'No valid authentication found (token expired or missing)',
+				);
+				return null;
+			}
+
+			authDebugLog('Token is valid, fetching user profile from server...');
+
+			// Validate session with server
+			const user = await this.getCurrentUser();
+			authDebugLog('Authentication initialized successfully', {
+				userId: user.id,
+				email: user.email,
+			});
+			return user;
+		} catch (error) {
+			authDebugLog('Authentication initialization failed:', error);
+			authDebugLog('Error details:', {
+				message: error instanceof Error ? error.message : 'Unknown error',
+				stack: error instanceof Error ? error.stack : undefined,
+			});
+
+			// Clear invalid tokens
+			httpClient.clearAuthTokens();
+
+			return null;
+		}
+	}
+}
+
+// Export singleton instance
+export const authService = AuthService.getInstance();

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Debug Environment Variables</title>
+</head>
+
+<body>
+    <h1>Environment Variables Debug</h1>
+    <div id="env-info"></div>
+
+    <script type="module">
+        // Simulate how Vite reads environment variables
+        const envVars = {
+            VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL,
+            VITE_SECURE_COOKIES: import.meta.env.VITE_SECURE_COOKIES,
+            VITE_APP_ENVIRONMENT: import.meta.env.VITE_APP_ENVIRONMENT,
+            MODE: import.meta.env.MODE,
+            PROD: import.meta.env.PROD,
+            DEV: import.meta.env.DEV
+        };
+
+        console.log('Environment variables:', envVars);
+
+        document.getElementById('env-info').innerHTML = `
+            <h3>Environment Variables:</h3>
+            <pre>${JSON.stringify(envVars, null, 2)}</pre>
+            <h3>Current URL:</h3>
+            <p>${window.location.href}</p>
+        `;
+    </script>
+</body>
+
+</html>
