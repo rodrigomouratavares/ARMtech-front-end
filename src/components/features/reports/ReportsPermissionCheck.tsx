@@ -1,8 +1,6 @@
 import { AlertTriangle, Settings, Shield, User } from 'lucide-react';
 import type React from 'react';
 import { useAuth } from '../../../context/AuthContext';
-import QuickPermissionTest from './QuickPermissionTest';
-import UserDebugInfo from './UserDebugInfo';
 
 /**
  * Component to diagnose and help resolve reports permission issues
@@ -18,19 +16,6 @@ export const ReportsPermissionCheck: React.FC = () => {
 
 	return (
 		<div className="min-h-screen bg-gray-50 p-4">
-			{/* Quick Test */}
-			{process.env.NODE_ENV === 'development' && (
-				<div className="max-w-2xl mx-auto mb-6">
-					<QuickPermissionTest />
-				</div>
-			)}
-
-			{/* Debug Info */}
-			{process.env.NODE_ENV === 'development' && (
-				<div className="max-w-4xl mx-auto mb-6">
-					<UserDebugInfo />
-				</div>
-			)}
 
 			<div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
 				<div className="flex items-center justify-center w-16 h-16 mx-auto bg-yellow-100 rounded-full mb-4">
@@ -134,18 +119,6 @@ export const ReportsPermissionCheck: React.FC = () => {
 
 				{/* Actions */}
 				<div className="flex flex-col space-y-2">
-					{/* Temporary Access Button (for testing) */}
-					{process.env.NODE_ENV === 'development' && (
-						<button
-							onClick={() => {
-								localStorage.setItem('temp_reports_permission', 'true');
-								window.location.reload();
-							}}
-							className="w-full bg-orange-600 text-white py-2 px-4 rounded-lg hover:bg-orange-700 transition-colors"
-						>
-							🔧 Habilitar Acesso Temporário (Teste)
-						</button>
-					)}
 
 					<button
 						onClick={() => (window.location.href = '#/dashboard')}
@@ -164,33 +137,7 @@ export const ReportsPermissionCheck: React.FC = () => {
 					)}
 				</div>
 
-				{/* Debug Info (only in development) */}
-				{process.env.NODE_ENV === 'development' && (
-					<details className="mt-6">
-						<summary className="text-xs text-gray-500 cursor-pointer">
-							Debug Info (Development Only)
-						</summary>
-						<pre className="text-xs text-gray-400 mt-2 bg-gray-100 p-2 rounded overflow-auto">
-							{JSON.stringify(
-								{
-									user: user
-										? {
-												id: user.id,
-												name: user.name,
-												email: user.email,
-												userType: user.userType,
-											}
-										: null,
-									permissions,
-									hasReportsPermission,
-									isAdmin,
-								},
-								null,
-								2,
-							)}
-						</pre>
-					</details>
-				)}
+
 			</div>
 		</div>
 	);

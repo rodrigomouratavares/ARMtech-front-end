@@ -11,9 +11,7 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import flowcrmSvg from '../../../assets/flowcrm.svg';
-import { isDevelopment } from '../../../config/environment';
 import { useAuth } from '../../../context/AuthContext';
-import SessionDebugPanel from '../../debug/SessionDebugPanel';
 
 const LoginPage: React.FC = () => {
 	const navigate = useNavigate();
@@ -109,9 +107,6 @@ const LoginPage: React.FC = () => {
 
 	return (
 		<div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-white">
-			{/* Debug Panel - only in development */}
-			{isDevelopment() && <SessionDebugPanel />}
-
 			{/* Coluna da imagem (desktop) */}
 			<div className="hidden lg:block relative h-full min-h-screen">
 				<img
