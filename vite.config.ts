@@ -14,9 +14,10 @@ export default defineConfig({
 	server: {
 		proxy: {
 			'/api': {
-				target: 'http://localhost:3000',
+				target: process.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
 				changeOrigin: true,
 				secure: false,
+				rewrite: (path) => path.replace(/^\/api/, ''),
 				configure: (proxy, _options) => {
 					proxy.on('error', (err, _req, _res) => {
 						console.log('proxy error', err);

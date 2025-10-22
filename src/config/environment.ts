@@ -30,7 +30,7 @@ export interface EnvironmentConfig {
 
 // Default configuration values
 const DEFAULT_CONFIG: EnvironmentConfig = {
-	apiBaseUrl: 'http://127.0.0.1:3000/api',
+	apiBaseUrl: 'http://localhost:3000/api',
 	apiTimeout: 15000,
 	tokenStorageKey: 'flowcrm_token',
 	refreshTokenStorageKey: 'flowcrm_refresh_token',
@@ -38,8 +38,8 @@ const DEFAULT_CONFIG: EnvironmentConfig = {
 	appName: 'Flow CRM',
 	appVersion: '1.0.0',
 	appEnvironment: 'development',
-	debugApiCalls: false,
-	debugAuth: false,
+	debugApiCalls: true,
+	debugAuth: true,
 	enableMockData: false,
 	enableOfflineMode: false,
 	enableCsrfProtection: true,

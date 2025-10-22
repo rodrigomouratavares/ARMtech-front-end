@@ -22,9 +22,8 @@ class HttpClient {
 			PROD: import.meta.env.PROD,
 		});
 
-		// Use local proxy in production, direct API in development
-		const baseURL =
-			config.appEnvironment === 'development' ? '/api' : config.apiBaseUrl;
+		// Use proxy in development, direct API in production
+		const baseURL = config.appEnvironment === 'development' ? '/api' : config.apiBaseUrl;
 
 		this.axiosInstance = axios.create({
 			baseURL,
@@ -40,32 +39,14 @@ class HttpClient {
 	}
 
 	private setupInterceptors(): void {
-		// Request interceptor for authentication and proxy URL transformation
+		// Request interceptor for authentication
 		this.axiosInstance.interceptors.request.use(
 			(config) => {
 				console.log('Request interceptor:', {
 					url: config.url,
 					baseURL: config.baseURL,
 					method: config.method,
-					headers: config.headers,
 				});
-
-				// Transform URL for proxy in production
-				if (config.baseURL === '/api/proxy' && config.url) {
-					// Remove leading slash from URL
-					const cleanUrl = config.url.startsWith('/')
-						? config.url.slice(1)
-						: config.url;
-					config.url = `?path=${encodeURIComponent(cleanUrl)}`;
-
-					// Add query parameters to the path
-					if (config.params) {
-						const searchParams = new URLSearchParams(config.params);
-						const pathWithParams = `${cleanUrl}?${searchParams.toString()}`;
-						config.url = `?path=${encodeURIComponent(pathWithParams)}`;
-						config.params = {}; // Clear params as they're now in the path
-					}
-				}
 
 				const token = tokenStorage.getToken();
 				if (token) {
