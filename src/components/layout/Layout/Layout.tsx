@@ -49,11 +49,7 @@ const Layout: React.FC<LayoutProps> = ({
 		}
 	};
 
-	const handleMobileOverlayClick = () => {
-		if (isMobile) {
-			setIsMobileSidebarOpen(false);
-		}
-	};
+
 
 	// Close sidebar when clicking outside on mobile
 	useEffect(() => {

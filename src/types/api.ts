@@ -236,6 +236,7 @@ export interface LoginResponse {
 
 export interface RefreshTokenResponse {
 	token: string;
+	refreshToken?: string;
 	expiresIn: number;
 }
 

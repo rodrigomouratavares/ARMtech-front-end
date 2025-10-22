@@ -89,11 +89,57 @@ export class AuthService {
 				'/auth/refresh',
 			);
 			const { token, refreshToken } = response.data;
-			httpClient.setAuthTokens(token, refreshToken);
+			httpClient.setAuthTokens(token, refreshToken || '');
 			return token;
 		} catch (error) {
 			httpClient.clearAuthTokens();
 			throw error;
+		}
+	}
+
+	/**
+	 * Check if user is currently authenticated
+	 */
+	isAuthenticated(): boolean {
+		const token = tokenStorage.getToken();
+		if (!token) {
+			return false;
+		}
+
+		try {
+			// Parse JWT token to check expiration
+			const payload = JSON.parse(atob(token.split('.')[1]));
+			const currentTime = Date.now() / 1000;
+			return payload.exp > currentTime;
+		} catch (error) {
+			authDebugLog('Token validation error:', error);
+			return false;
+		}
+	}
+
+	/**
+	 * Initialize authentication state on app startup
+	 */
+	async initializeAuth(): Promise<User | null> {
+		try {
+			authDebugLog('Initializing authentication state');
+
+			if (!this.isAuthenticated()) {
+				authDebugLog('No valid authentication found');
+				return null;
+			}
+
+			// Validate session with server
+			const user = await this.getCurrentUser();
+			authDebugLog('Authentication initialized successfully', {
+				userId: user.id,
+				email: user.email,
+			});
+			return user;
+		} catch (error) {
+			authDebugLog('Authentication initialization failed:', error);
+			httpClient.clearAuthTokens();
+			return null;
 		}
 	}
 }
