@@ -23,7 +23,7 @@
 				},
 				{
 					"key": "Content-Security-Policy",
-					"value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://flow-crm-backend-58ub.onrender.com https://*.onrender.com; frame-src 'none'; object-src 'none';"
+					"value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://armtech-back-end.onrender.com https://*.onrender.com; frame-src 'none'; object-src 'none';"
 				}
 			]
 		}
